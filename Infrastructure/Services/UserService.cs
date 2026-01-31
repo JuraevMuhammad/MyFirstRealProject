@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Domain.DTOs.User;
 using Domain.Entities;
+using Domain.Filters;
 using Domain.Response;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
@@ -80,4 +81,33 @@ public class UserService : IUserService
     }
 
     #endregion
+
+    #region GetPaginationUsers
+
+    public PaginationResponse<List<GetUser>> GetPaginationUsers(UserFilter filter)
+    {
+        var users = _dbContext.Users.AsQueryable();
+
+        if (string.IsNullOrEmpty(filter.UserName))
+            users = users.Where(x => x.IsDeleted == false && x.FullName.ToLower()
+                .Contains(filter.UserName.ToLower()));
+        
+        var totalRecords = users.Count();
+        
+        var res = users.Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize).ToList().Select(x => new GetUser()
+            {
+                Id = x.Id,
+                FullName = x.FullName,
+                Role = x.Role,
+                ProfileImage = x.ProfileImage,
+                CarId = x.CarId
+            }).ToList();
+        
+        return new PaginationResponse<List<GetUser>> (filter.PageNumber, filter.PageSize, totalRecords, res);
+    }
+
+    #endregion
+    
+    
 }

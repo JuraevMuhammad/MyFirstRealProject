@@ -1,6 +1,6 @@
 ﻿namespace Domain.Filters;
 
-public class UserFilter
+public class UserFilter : BaseFilter
 {
-    
+    public string UserName { get; set; } = string.Empty;
 }
