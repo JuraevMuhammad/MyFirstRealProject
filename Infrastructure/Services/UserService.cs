@@ -15,20 +15,22 @@ public class UserService : IUserService
     private readonly ApplicationDbContext _dbContext;
     private readonly IFileStorageService _fileService;
     private readonly IJwtProvider _jwtProvider;
+    private readonly ISandMail _mail;
 
     public UserService(IPasswordHasher passwordHasher,
         ApplicationDbContext dbContext,
         IFileStorageService fileService,
-        IJwtProvider jwtProvider)
+        IJwtProvider jwtProvider,
+        ISandMail mail)
     {
         _passwordHasher = passwordHasher;
         _dbContext = dbContext;
         _fileService = fileService;
         _jwtProvider = jwtProvider;
+        _mail = mail;
     }
 
     #endregion
-
 
     #region Register
 
@@ -49,12 +51,17 @@ public class UserService : IUserService
             created.ProfileImage = await _fileService.SaveFileAsync(dto.ProfileImage, "images");
         
         _dbContext.Users.Add(created);
+        
+        await _mail.SendAsync(created, dto.Password);
+        
         await _dbContext.SaveChangesAsync();
 
         return new Response<string>(HttpStatusCode.Created, "Register user");
     }
     
     #endregion
+
+    #region Login
 
     public async Task<string> Login(LoginUser dto)
     {
@@ -65,10 +72,12 @@ public class UserService : IUserService
         
         var result = _passwordHasher.Verify(dto.Password, user.PasswordHash);
         
-        if(!result) throw new Exception("invalid password");
+        if(!result) return "invalid password";
         
         var token = _jwtProvider.GenerateToken(user);
         
         return token;
     }
+
+    #endregion
 }

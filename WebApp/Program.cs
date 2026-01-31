@@ -1,4 +1,5 @@
 using Infrastructure.Data;
+using Infrastructure.Email;
 using Infrastructure.Interfaces;
 using Infrastructure.JWT;
 using Infrastructure.Services;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection(nameof(EmailOptions)));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,6 +23,7 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<ISandMail, SandMail>();
 
 var app = builder.Build();
 
