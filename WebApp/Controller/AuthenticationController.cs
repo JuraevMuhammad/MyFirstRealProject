@@ -17,7 +17,7 @@ public class AuthenticationController(IUserService service) : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginUser dto)
+    public async Task<IActionResult> Login([FromQuery]LoginUser dto)
     {
         var token = await service.Login(dto);
 

@@ -11,4 +11,7 @@ public interface IUserService
 
     PaginationResponse<List<GetUser>> GetPaginationUsers(UserFilter filter);
     Response<GetUser> GetUserById(int userId);
+    
+    Task<Response<string>> UpdateUser(int id, UpdateUser dto);
+    Task<Response<string>> UpdatePasswordUser(int id, UpdatePasswordUser dto);
 }

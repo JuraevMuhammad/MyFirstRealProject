@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Xml;
 using Domain.DTOs.User;
 using Domain.Entities;
 using Domain.Filters;
@@ -96,7 +97,7 @@ public class UserService : IUserService
     {
         var users = _dbContext.Users.AsQueryable();
 
-        if (string.IsNullOrEmpty(filter.UserName))
+        if (!string.IsNullOrEmpty(filter.UserName))
             users = users.Where(x => x.IsDeleted == false && x.FullName.ToLower()
                 .Contains(filter.UserName.ToLower()));
 
@@ -138,6 +139,49 @@ public class UserService : IUserService
         };
         
         return new Response<GetUser>(getUser);
+    }
+
+    #endregion
+
+    #region UpdateUser
+
+    public async Task<Response<string>> UpdateUser(int id, UpdateUser dto)
+    {
+        var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+        if (user == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+
+        user.FullName = dto.FullName ?? user.FullName;
+        if (dto.ProfileImage != null)
+            user.ProfileImage = await _fileService.SaveFileAsync(dto.ProfileImage, "images");
+        user.CarId = dto.CarId ?? user.CarId;
+
+        await _dbContext.SaveChangesAsync();
+        return new Response<string>(HttpStatusCode.OK, "Updated user");
+    }
+
+    #endregion
+
+    #region UpdatePasswordUser
+    public async Task<Response<string>> UpdatePasswordUser(int id, UpdatePasswordUser dto)
+    {
+        var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+        if (user == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+
+        if (string.IsNullOrEmpty(dto.LastPassword) || string.IsNullOrEmpty(dto.NewPassword))
+            return new Response<string>(HttpStatusCode.BadRequest, "invalid password");
+        
+        if (!_passwordHasher.Verify(dto.LastPassword, user.PasswordHash))
+            return new Response<string>(HttpStatusCode.Unauthorized, "Current password is incorrect");
+        
+        if (!_logic.ValidatorPassword(dto.NewPassword))
+            return new Response<string> (HttpStatusCode.BadRequest, "invalid password");
+        
+        user.PasswordHash = _passwordHasher.Generate(dto.NewPassword);
+        await _dbContext.SaveChangesAsync();
+        
+        return new Response<string>(HttpStatusCode.OK, "Updated password in user");
     }
 
     #endregion

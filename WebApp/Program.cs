@@ -2,6 +2,7 @@ using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Interfaces;
 using Infrastructure.JWT;
+using Infrastructure.Logic;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<ISandMail, SandMail>();
+builder.Services.AddScoped<ILogic, Logic>();
 
 var app = builder.Build();
 
