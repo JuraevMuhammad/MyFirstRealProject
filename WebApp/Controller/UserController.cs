@@ -36,4 +36,11 @@ public class UserController(IUserService service) : ControllerBase
         var res = await service.UpdatePasswordUser(id, dto);
         return StatusCode(res.StatusCode, res);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var res = await service.DeleteUser(id);
+        return StatusCode(res.StatusCode, res);
+    }
 }

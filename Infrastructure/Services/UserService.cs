@@ -98,13 +98,15 @@ public class UserService : IUserService
         var users = _dbContext.Users.AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.UserName))
-            users = users.Where(x => x.IsDeleted == false && x.FullName.ToLower()
+            users = users.Where(x => x.FullName.ToLower()
                 .Contains(filter.UserName.ToLower()));
 
         var totalRecords = users.Count();
 
-        var res = users.Skip((filter.PageNumber - 1) * filter.PageSize)
-            .Take(filter.PageSize).ToList().Select(x => new GetUser()
+        var res = users.Where(x => !x.IsDeleted)
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize).ToList()
+            .Select(x => new GetUser()
             {
                 Id = x.Id,
                 FullName = x.FullName,
@@ -123,7 +125,7 @@ public class UserService : IUserService
 
     public Response<GetUser> GetUserById(int userId)
     {
-        var res = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
+        var res = _dbContext.Users.FirstOrDefault(x => x.Id == userId && !x.IsDeleted);
         
         if(res == null)
             return new Response<GetUser>(HttpStatusCode.NotFound, "User not found");
@@ -182,6 +184,21 @@ public class UserService : IUserService
         await _dbContext.SaveChangesAsync();
         
         return new Response<string>(HttpStatusCode.OK, "Updated password in user");
+    }
+
+    #endregion
+
+    #region DeleteUser
+
+    public async Task<Response<string>> DeleteUser(int id)
+    {
+        var user = _dbContext.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == id);
+        if (user == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+        user.IsDeleted = true;
+
+        await _dbContext.SaveChangesAsync();
+        return new Response<string>(HttpStatusCode.OK, "Deleted user");
     }
 
     #endregion
