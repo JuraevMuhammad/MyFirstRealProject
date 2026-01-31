@@ -1,5 +1,5 @@
 ﻿using Domain.DTOs.Car;
-using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Domain.Filters;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +10,7 @@ namespace WebApp.Controller;
 [Route("[controller]")]
 public class CarController(ICarService service) : ControllerBase
 {
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Created([FromForm] CreatedCar dto)
     {
@@ -24,6 +25,7 @@ public class CarController(ICarService service) : ControllerBase
         return StatusCode(res.StatusCode, res);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut]
     public async Task<IActionResult> UpdateCar(int id,[FromForm] UpdateCar car)
     {
