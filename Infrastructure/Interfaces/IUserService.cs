@@ -10,4 +10,5 @@ public interface IUserService
     Task<string> Login(LoginUser dto);
 
     PaginationResponse<List<GetUser>> GetPaginationUsers(UserFilter filter);
+    Response<GetUser> GetUserById(int userId);
 }

@@ -14,6 +14,11 @@ public class UserController(IUserService service) : ControllerBase
         var res = service.GetPaginationUsers(filter);
         return StatusCode(res.StatusCode, res);
     }
-    
-    
+
+    [HttpGet("{id}")]
+    public IActionResult GetUserById(int id)
+    {
+        var res = service.GetUserById(id);
+        return StatusCode(res.StatusCode, res);
+    }
 }
