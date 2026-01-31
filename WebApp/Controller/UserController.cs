@@ -1,6 +1,7 @@
 ﻿using Domain.DTOs.User;
 using Domain.Filters;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controller;
@@ -37,6 +38,7 @@ public class UserController(IUserService service) : ControllerBase
         return StatusCode(res.StatusCode, res);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {

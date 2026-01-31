@@ -27,7 +27,7 @@ public class CarController(ICarService service) : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpPut]
-    public async Task<IActionResult> UpdateCar(int id,[FromForm] UpdateCar car)
+    public async Task<IActionResult> UpdateCar(int id,[FromQuery] UpdateCar car)
     {
         var res = await service.UpdateCar(id, car);
         return Ok(res);

@@ -21,10 +21,7 @@ public class SandMail : ISandMail
     
     public async Task SendAsync(User user, string password)
     {
-        Console.WriteLine($"FROM = '{_options.From}'");
-        Console.WriteLine($"TO = '{user.Email}'");
-        
-        MailAddress fromMailAddress = new(_options.From, _options.UserName);
+        MailAddress fromMailAddress = new(_options.From, "Car Rental Service");
         MailAddress toAddress = new(user.Email, user.FullName);
 
         using var mailMessage = new MailMessage(fromMailAddress, toAddress)
