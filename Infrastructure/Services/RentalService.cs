@@ -6,7 +6,6 @@ using Domain.Response;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Logic;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Infrastructure.Services;
 
@@ -64,12 +63,14 @@ public class RentalService : IRentalService
         {
             CarId = rent.CarId,
             UserId = rent.UserId,
-            StartDate = rent.StartDate,
+            StartDate = DateTime.UtcNow,
             Status = rent.Status,
             TotalPrice = car.DailyPrice
         };
         
         car.IsAvailable = true;
+        user.CarId = rent.CarId;
+        user.RentalId = rental.Id;
 
         _context.Rentals.Add(rental);
         

@@ -15,6 +15,7 @@ public class User : BaseEntity
     public UserRole Role { get; set; }
     public string? ProfileImage { get; set; }
     public int? CarId { get; set; }
+    public int? RentalId { get; set; }
     
     public Car? Car { get; set; }
     public Rental? Rental { get; set; }
