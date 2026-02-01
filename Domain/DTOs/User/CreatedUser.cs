@@ -17,4 +17,5 @@ public class CreatedUser
     public UserRole Role { get; set; }
     public IFormFile? ProfileImage { get; set; }
     public int? CarId { get; set; }
+    public int? RentalId { get; set; }
 }

@@ -11,7 +11,7 @@ public class Car : BaseEntity
     public int Year { get; set; }
     public decimal DailyPrice { get; set; }
     public string? ImagePath { get; set; }
-    public bool IsAvailable { get; set; }
+    public bool IsAvailable { get; set; } 
     
     public User? User { get; set; }
     public Rental? Rental { get; set; }

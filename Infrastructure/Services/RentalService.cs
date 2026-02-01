@@ -59,6 +59,9 @@ public class RentalService : IRentalService
         if (car == null || user == null)
             return new Response<string>(HttpStatusCode.NotFound, "Car or User not found");
 
+        if (car.IsAvailable)
+            return new Response<string>(HttpStatusCode.BadRequest, "Car is not available");
+            
         var rental = new Rental()
         {
             CarId = rent.CarId,
