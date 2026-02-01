@@ -26,6 +26,7 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<ISandMail, SandMail>();
 builder.Services.AddScoped<ILogic, Logic>();
+builder.Services.AddScoped<IRentalService, RentalService>();
 
 var app = builder.Build();
 

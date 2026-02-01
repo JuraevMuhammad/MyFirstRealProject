@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Domain.DTOs.Car;
+using Domain.DTOs.Rental;
 using Domain.Entities;
 using Domain.Response;
 
@@ -43,6 +44,27 @@ public class Logic : ILogic
                 ImagePath = x.ImagePath!,
                 IsAvailable = x.IsAvailable,
                 CreatedAt = x.CreatedAt,
+            }
+        ).ToList();
+        
+        return res;
+    }
+
+    #endregion
+
+    #region LogicGetRental
+
+    public List<GetRental> GetRentals(List<Rental> rentals)
+    {
+        var res = rentals.Select(x => new GetRental()
+            {
+                Id = x.Id,
+                CarId = x.CarId,
+                UserId = x.UserId,
+                TotalPrice = x.TotalPrice,
+                Status = x.Status,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
             }
         ).ToList();
         

@@ -11,6 +11,7 @@ public class Rental
     public DateTime EndDate { get; set; }
     public decimal TotalPrice { get; set; }
     public RentalStatus Status { get; set; }
+    public bool IsDeleted { get; set; } = false;
     
     public List<User>? Users { get; set; }
     public List<Car>? Cars { get; set; }
