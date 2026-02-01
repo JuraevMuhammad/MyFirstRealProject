@@ -62,9 +62,9 @@ public class UserService : IUserService
 
         _dbContext.Users.Add(created);
 
-        await _mail.SendAsync(created, dto.Password);
-
         await _dbContext.SaveChangesAsync();
+        
+        await _mail.SendAsync(created, dto.Password);
 
         return new Response<string>(HttpStatusCode.Created, "Register user");
     }

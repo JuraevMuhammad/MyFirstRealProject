@@ -64,11 +64,12 @@ public class Logic : ILogic
                 TotalPrice = x.TotalPrice,
                 Status = x.Status,
                 StartDate = x.StartDate,
-                EndDate = x.EndDate,
+                EndDate = x.EndDate
             }
         ).ToList();
         
         return res;
+
     }
 
     #endregion
