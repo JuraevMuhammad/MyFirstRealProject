@@ -7,6 +7,7 @@ using Domain.Response;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Logic;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
@@ -20,13 +21,14 @@ public class UserService : IUserService
     private readonly IJwtProvider _jwtProvider;
     private readonly ISandMail _mail;
     private readonly ILogic _logic;
+    private readonly ILogger<UserService> _logger;
 
     public UserService(IPasswordHasher passwordHasher,
         ApplicationDbContext dbContext,
         IFileStorageService fileService,
         IJwtProvider jwtProvider,
-        ISandMail mail,
-        ILogic logic)
+        ISandMail mail, ILogic logic,
+        ILogger<UserService> logger)
     {
         _passwordHasher = passwordHasher;
         _dbContext = dbContext;
@@ -34,6 +36,7 @@ public class UserService : IUserService
         _jwtProvider = jwtProvider;
         _mail = mail;
         _logic = logic;
+        _logger = logger;
     }
 
     #endregion
@@ -95,12 +98,15 @@ public class UserService : IUserService
     public PaginationResponse<List<GetUser>> GetPaginationUsers(UserFilter filter)
     {
         var users = _dbContext.Users.AsQueryable();
+        _logger.LogInformation("Get Users in DataBase");
 
         if (!string.IsNullOrEmpty(filter.UserName))
             users = users.Where(x => x.FullName.ToLower()
                 .Contains(filter.UserName.ToLower()));
+        _logger.LogInformation($"Search User By FullName {filter.UserName}");
 
         var totalRecords = users.Count();
+        _logger.LogInformation($"Get totalRecords: {totalRecords} in user.Count");
 
         var res = users.Where(x => !x.IsDeleted)
             .Skip((filter.PageNumber - 1) * filter.PageSize)

@@ -123,8 +123,24 @@ public class RentalService : IRentalService
         return new Response<string>(HttpStatusCode.OK, "Return Car");
     }
 
-    public PaginationResponse<List<GetRental>> GetSortByRentalDate(GetRental dto)
+    public PaginationResponse<List<GetRental>> GetSortByRentalDate(RentalFilter filter)
     {
-        throw new NotImplementedException();
+        var res = _context.Rentals.AsQueryable();
+        
+        if(filter.Status != null)
+            res = res.Where(x => x.Status == filter.Status.Value);
+        if (filter.StartDate != null)
+            res = res.Where(x => x.EndDate >= filter.StartDate);
+        if(filter.EndDate != null)
+            res = res.Where(x => x.StartDate <= filter.EndDate);
+        
+        var totalRecord = res.Count();
+        
+        var result = res.Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize).ToList();
+
+        var get = _logic.GetRentals(result);
+        
+        return new PaginationResponse<List<GetRental>>(filter.PageNumber, filter.PageSize, totalRecord, get);
     }
 }
