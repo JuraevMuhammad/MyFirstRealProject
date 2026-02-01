@@ -80,4 +80,40 @@ public class SandMail : ISandMail
     }
 
     #endregion
+
+    #region SendPasswordChangedEmailAsync
+
+    public async Task SendPasswordChangedEmailAsync(User user, string password)
+    {
+        MailAddress from = new (_options.From, "Car Rental Service");
+        MailAddress to = new(user.Email, user.FullName);
+
+        using var mailMessage = new MailMessage(from, to)
+        {
+            Subject = user.Email,
+            Body = $"""
+                    Здраствуйте {user.FullName}!
+                    Вы сегодня изменили свой пароль
+                    Новый пароль пароль: {password}
+
+                    ---не забывайте свой пароль---
+                    ---без него не можете изменить следующий раз---
+                    """
+        };
+
+        using var smtp = new SmtpClient(_options.Host, _options.Port)
+        {
+            EnableSsl = true,
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            UseDefaultCredentials = false,
+            Credentials = new NetworkCredential(
+                _options.UserName,
+                _options.Password)
+        };
+        
+        await smtp.SendMailAsync(mailMessage);
+    }
+
+    #endregion
+
 }

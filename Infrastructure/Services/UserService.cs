@@ -198,6 +198,8 @@ public class UserService : IUserService
         user.PasswordHash = _passwordHasher.Generate(dto.NewPassword);
         await _dbContext.SaveChangesAsync();
         
+        await _mail.SendPasswordChangedEmailAsync(user, dto.NewPassword);
+        
         return new Response<string>(HttpStatusCode.OK, "Updated password in user");
     }
 
@@ -209,7 +211,10 @@ public class UserService : IUserService
     {
         var user = _dbContext.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == id);
         if (user == null)
+        {
+            _logger.LogWarning("User with id: {id} not found", id);
             return new Response<string>(HttpStatusCode.NotFound, "not found");
+        }
         user.IsDeleted = true;
 
         await _dbContext.SaveChangesAsync();

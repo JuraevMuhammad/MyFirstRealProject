@@ -53,4 +53,11 @@ public class StatisticsController : ControllerBase
         var activeRentals = _context.Rentals.Count(x => x.Status == RentalStatus.Active);
         return Ok(new { activeRentals });
     }
+
+    [HttpGet("revenue")]
+    public IActionResult TotalRevenue()
+    {
+        var revenue = _context.Rentals.Where(x => x.Status == RentalStatus.Canceled).Sum(x => x.TotalPrice);
+        return Ok(new { revenue });
+    }
 }
