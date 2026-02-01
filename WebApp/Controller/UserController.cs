@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApp.Controller;
 
 [ApiController]
-[Route("api/user/[controller]")]
+[Route("api/[controller]")]
 public class UserController(IUserService service) : ControllerBase
 {
     [HttpGet("pagination")]
@@ -38,8 +38,7 @@ public class UserController(IUserService service) : ControllerBase
         return StatusCode(res.StatusCode, res);
     }
 
-    [Authorize(Roles = "Admin")]
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         var res = await service.DeleteUser(id);

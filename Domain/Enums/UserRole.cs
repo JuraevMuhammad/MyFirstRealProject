@@ -12,3 +12,10 @@ public enum RentalStatus
     Completed = 2,
     Canceled = 3,
 }
+
+public enum EmailStatus
+{
+    Available = 1,      // Свободен email
+    AlreadyExists = 2,  // Уже есть такой email
+    NotAllowed = 3      // Этот email не подойдёт
+}

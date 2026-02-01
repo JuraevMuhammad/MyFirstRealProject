@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApp.Controller;
 
 [ApiController]
-[Route("api/rental[controller]")]
+[Route("api/[controller]")]
 public class RentalController(IRentalService service) : ControllerBase
 {
     [HttpGet("page")]

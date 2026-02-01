@@ -2,6 +2,7 @@
 using System.Xml;
 using Domain.DTOs.User;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Filters;
 using Domain.Response;
 using Infrastructure.Data;
@@ -49,6 +50,18 @@ public class UserService : IUserService
         if (!res)
             return new Response<string>(HttpStatusCode.BadRequest, "invalid password");
         
+        var result = _logic.ValidatorEmail(dto.Email);
+        
+        switch (result)
+        {
+            case EmailStatus.AlreadyExists:
+                return new Response<string>(HttpStatusCode.Conflict, "Email already exists");
+            case EmailStatus.NotAllowed:
+                return new Response<string>(HttpStatusCode.BadRequest, "Email not allowed");
+            case EmailStatus.Available:
+                break;
+        }
+
         var hashedPassword = _passwordHasher.Generate(dto.Password);
 
         var created = new User()

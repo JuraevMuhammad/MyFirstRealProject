@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApp.Controller;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CarController(ICarService service) : ControllerBase
 {
     

@@ -1,12 +1,15 @@
 ﻿using System.Net;
 using Domain.DTOs.Car;
 using Domain.DTOs.Rental;
+using Domain.DTOs.User;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Response;
+using Infrastructure.Data;
 
 namespace Infrastructure.Logic;
 
-public class Logic : ILogic
+public class Logic(ApplicationDbContext context) : ILogic
 {
     #region LogicPassword
 
@@ -26,6 +29,21 @@ public class Logic : ILogic
             }
         }
         return p >= 8 && cnt >= 1 && sum >=1;
+    }
+
+    #endregion
+
+    #region LogicEmail
+
+    public EmailStatus ValidatorEmail(string email)
+    {
+        email = email.Trim();
+        var res = context.Users.Any(x => x.Email == email);
+        if (res)
+            return EmailStatus.AlreadyExists;
+        if (email.EndsWith("@gmail.com") || email.EndsWith("@mail.ru") || email.EndsWith(".com") && email.Contains('@'))
+            return EmailStatus.Available;
+        return EmailStatus.NotAllowed;
     }
 
     #endregion
@@ -70,6 +88,22 @@ public class Logic : ILogic
         
         return res;
 
+    }
+
+    #endregion
+
+    #region LogicGetUser
+
+    public List<GetUser> GetUsers(List<User> users)
+    {
+        return users.Select(x => new GetUser()
+        {
+            Id = x.Id,
+            FullName = x.FullName,
+            ProfileImage = x.ProfileImage,
+            Role = x.Role,
+            CreatedAt = x.CreatedAt
+        }).ToList();
     }
 
     #endregion
