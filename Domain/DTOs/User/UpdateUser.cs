@@ -7,6 +7,4 @@ public class UpdateUser
 {
     public string? FullName { get; set; }
     public IFormFile? ProfileImage { get; set; }
-    public int? CarId { get; set; }
-    public int? RentalId { get; set; }
 }

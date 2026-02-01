@@ -13,5 +13,4 @@ public class CreatedCar
     public int Year { get; set; }
     public decimal DailyPrice { get; set; }
     public IFormFile? ImagePath { get; set; }
-    public bool IsAvailable { get; set; }
 }

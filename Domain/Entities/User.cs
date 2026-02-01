@@ -14,9 +14,6 @@ public class User : BaseEntity
     public required string PasswordHash { get; set; }
     public UserRole Role { get; set; }
     public string? ProfileImage { get; set; }
-    public int? CarId { get; set; }
-    public int? RentalId { get; set; }
     
-    public Car? Car { get; set; }
-    public Rental? Rental { get; set; }
+    public List<Rental>? Rentals { get; set; }
 }

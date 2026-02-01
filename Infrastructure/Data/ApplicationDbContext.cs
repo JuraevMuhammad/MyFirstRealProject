@@ -11,8 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasOne(u => u.Rental).WithMany(r => r.Users);
-        modelBuilder.Entity<User>().HasOne(u => u.Car).WithOne(c => c.User);
-        modelBuilder.Entity<Car>().HasOne(c => c.Rental).WithMany(r => r.Cars);
+        modelBuilder.Entity<Car>().HasMany(x => x.Rentals).WithOne(x => x.Car).HasForeignKey(x => x.CarId);
+        modelBuilder.Entity<User>().HasMany(x => x.Rentals).WithOne(x => x.User).HasForeignKey(x => x.UserId);
     }
 }

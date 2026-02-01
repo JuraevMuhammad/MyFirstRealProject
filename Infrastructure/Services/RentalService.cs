@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Domain.DTOs.Rental;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Filters;
 using Domain.Response;
 using Infrastructure.Data;
@@ -48,6 +49,8 @@ public class RentalService : IRentalService
 
     #endregion
 
+    #region RentCar
+
     public async Task<Response<string>> RentCar(RentCar rent)
     {
         var resCar = _context.Cars.AsQueryable();
@@ -72,8 +75,6 @@ public class RentalService : IRentalService
         };
         
         car.IsAvailable = true;
-        user.CarId = rent.CarId;
-        user.RentalId = rental.Id;
 
         _context.Rentals.Add(rental);
         
@@ -82,5 +83,48 @@ public class RentalService : IRentalService
         await _mail.RentalAsync(user, car, rental);
         
         return new Response<string>(HttpStatusCode.Created, "rental");
+    }
+
+
+    #endregion
+    
+    public async Task<Response<string>> ReturnCar(int id, ReturnCar dto)
+    {
+        var returnRental = _context.Rentals.AsQueryable();
+        var cars = _context.Cars.AsQueryable();
+        var users = _context.Users.AsQueryable();
+        
+
+        var rent = returnRental.FirstOrDefault(x => x.Id == id);
+        if (rent == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+
+        var car = cars.First(x => x.Id == rent.CarId);
+        var user = users.First(x => x.Id == rent.UserId);
+            
+        rent.EndDate = DateTime.UtcNow;
+        car.IsAvailable = false;
+        rent.Status = RentalStatus.Canceled;
+
+        if ((DateTime.UtcNow.Date - rent.StartDate.Date).Days > 1)
+        {
+            rent.TotalPrice = car.DailyPrice * (DateTime.UtcNow.Date - rent.StartDate.Date).Days;
+            Console.WriteLine("TotalPrice: " + rent.TotalPrice);
+        }
+
+        if (rent.TotalPrice < car.DailyPrice)
+        {
+            rent.TotalPrice = car.DailyPrice;
+            Console.WriteLine("TotalPrice: " + rent.TotalPrice);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return new Response<string>(HttpStatusCode.OK, "Return Car");
+    }
+
+    public PaginationResponse<List<GetRental>> GetSortByRentalDate(GetRental dto)
+    {
+        throw new NotImplementedException();
     }
 }

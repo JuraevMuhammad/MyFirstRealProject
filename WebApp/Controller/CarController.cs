@@ -10,7 +10,7 @@ namespace WebApp.Controller;
 [Route("[controller]")]
 public class CarController(ICarService service) : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
+    
     [HttpPost]
     public async Task<IActionResult> Created([FromForm] CreatedCar dto)
     {

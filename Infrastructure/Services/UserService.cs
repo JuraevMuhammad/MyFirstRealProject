@@ -54,8 +54,6 @@ public class UserService : IUserService
             PasswordHash = hashedPassword,
             Email = dto.Email,
             Role = dto.Role,
-            CarId = dto.CarId,
-            RentalId = dto.RentalId
         };
 
         if (dto.ProfileImage != null)
@@ -113,8 +111,6 @@ public class UserService : IUserService
                 FullName = x.FullName,
                 Role = x.Role,
                 ProfileImage = x.ProfileImage,
-                CarId = x.CarId,
-                RentalId = x.RentalId,
                 CreatedAt = x.CreatedAt
             }).ToList();
 
@@ -138,8 +134,6 @@ public class UserService : IUserService
             FullName = res.FullName,
             Role = res.Role,
             ProfileImage = res.ProfileImage,
-            CarId = res.CarId,
-            RentalId = res.RentalId,
             CreatedAt = res.CreatedAt
         };
         
@@ -159,8 +153,6 @@ public class UserService : IUserService
         user.FullName = dto.FullName ?? user.FullName;
         if (dto.ProfileImage != null)
             user.ProfileImage = await _fileService.SaveFileAsync(dto.ProfileImage, "images");
-        user.CarId = dto.CarId ?? user.CarId;
-        user.RentalId = dto.RentalId ?? user.RentalId;
 
         await _dbContext.SaveChangesAsync();
         return new Response<string>(HttpStatusCode.OK, "Updated user");

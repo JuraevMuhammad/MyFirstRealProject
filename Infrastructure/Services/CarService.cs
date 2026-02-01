@@ -40,7 +40,6 @@ public class CarService : ICarService
             Model = dto.Model,
             Year = dto.Year,
             DailyPrice = dto.DailyPrice,
-            IsAvailable = dto.IsAvailable,
         };
         
 

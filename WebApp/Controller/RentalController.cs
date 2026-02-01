@@ -10,7 +10,7 @@ namespace WebApp.Controller;
 public class RentalController(IRentalService service) : ControllerBase
 {
     [HttpGet("rental-page")]
-    public IActionResult GetRentalPage(BaseFilter filter)
+    public IActionResult GetRentalPage([FromQuery]BaseFilter filter)
     {
         var res = service.GetRentalPagination(filter);
         return StatusCode(res.StatusCode, res);
@@ -20,6 +20,13 @@ public class RentalController(IRentalService service) : ControllerBase
     public async Task<IActionResult> RentCar([FromQuery]RentCar dto)
     {
         var res = await service.RentCar(dto);
+        return StatusCode(res.StatusCode, res);
+    }
+
+    [HttpPut("return-car")]
+    public async Task<IActionResult> ReturnCar(int id, [FromQuery] ReturnCar dto)
+    {
+        var res = await service.ReturnCar(id, dto);
         return StatusCode(res.StatusCode, res);
     }
 }

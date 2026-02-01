@@ -13,6 +13,5 @@ public class Car : BaseEntity
     public string? ImagePath { get; set; }
     public bool IsAvailable { get; set; } 
     
-    public User? User { get; set; }
-    public Rental? Rental { get; set; }
+    public List<Rental>? Rentals { get; set; }
 }

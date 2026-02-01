@@ -8,7 +8,5 @@ public class GetUser
     public string FullName { get; set; } = string.Empty;
     public UserRole Role { get; set; }
     public string? ProfileImage { get; set; } = string.Empty;
-    public int? CarId { get; set; }
-    public int? RentalId { get; set; }
     public DateTime CreatedAt { get; set; }
 }
