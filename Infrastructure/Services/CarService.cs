@@ -7,11 +7,29 @@ using Domain.Filters;
 using Domain.Response;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
+using Infrastructure.Logic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Services;
 
-public class CarService(ApplicationDbContext context, IFileStorageService service) : ICarService
+public class CarService : ICarService
 {
+    #region Constructor
+
+    private readonly ILogic _logic;
+    private readonly IFileStorageService _service;
+    private readonly ApplicationDbContext _context;
+    public CarService(ILogic logic,
+        IFileStorageService service,
+        ApplicationDbContext context) 
+    {
+        _logic = logic;
+        _service = service;
+        _context = context;
+    }
+
+    #endregion
+    
     #region CreatedCar
 
     public async Task<string> CreatedCar(CreatedCar dto)
@@ -27,10 +45,10 @@ public class CarService(ApplicationDbContext context, IFileStorageService servic
         
 
         if (dto.ImagePath != null)
-            res.ImagePath = await service.SaveFileAsync(dto.ImagePath, "images");
+            res.ImagePath = await _service.SaveFileAsync(dto.ImagePath, "images");
         
-        context.Cars.Add(res);
-        await context.SaveChangesAsync();
+        _context.Cars.Add(res);
+        await _context.SaveChangesAsync();
 
         return "Created Car";
     }
@@ -41,7 +59,7 @@ public class CarService(ApplicationDbContext context, IFileStorageService servic
 
     public PaginationResponse<List<GetCar>> GetAllCars(CarFilter filter)
     {
-        var res = context.Cars.AsQueryable();
+        var res = _context.Cars.AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.Brand))
             res = res.Where(x => x.Brand.ToLower().Contains(filter.Brand.ToLower()));
@@ -75,17 +93,17 @@ public class CarService(ApplicationDbContext context, IFileStorageService servic
 
     public async Task<string> UpdateCar(int id, UpdateCar car)
     {
-        var res = context.Cars.FirstOrDefault(x => x.Id == id);
+        var res = _context.Cars.FirstOrDefault(x => x.Id == id);
         if (res == null)
             return "not found";
-        res.ImagePath = await service.SaveFileAsync(car.ImagePath!, "images");
+        res.ImagePath = await _service.SaveFileAsync(car.ImagePath!, "images");
         res.DailyPrice = (decimal)car.DailyPrice!;
         res.Brand = car.Brand ?? res.Brand;
         res.Model = car.Model ?? res.Model;
         res.Year = car.Year ?? res.Year;
         res.IsAvailable = car.IsAvailable ?? res.IsAvailable;
         
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return "Updated Car";
     }
 
@@ -95,7 +113,7 @@ public class CarService(ApplicationDbContext context, IFileStorageService servic
 
     public Response<GetCar> GetCar(int id)
     {
-        var res = context.Cars.FirstOrDefault(x => x.Id == id);
+        var res = _context.Cars.FirstOrDefault(x => x.Id == id);
 
         var get = new GetCar()
         {
@@ -111,5 +129,58 @@ public class CarService(ApplicationDbContext context, IFileStorageService servic
     }
 
     #endregion
+
+    #region DeleteCar
+
+    public async Task<Response<string>> DeleteCar(int id)
+    {
+        var car = _context.Cars.FirstOrDefault(x => x.Id == id && !x.IsDeleted);
+        if (car == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+        car.IsDeleted = true;
+
+        await _context.SaveChangesAsync();
+        return new Response<string>(HttpStatusCode.OK, "Deleted Car");
+    }
     
+    #endregion
+
+    #region GetCarSearchByBrandAndModel
+
+    public PaginationResponse<List<GetCar>> GetCarSearchByBrandAndModel(NameCarFilter filter)
+    {
+        var quary = _context.Cars.AsQueryable();
+        
+        if (!string.IsNullOrEmpty(filter.Brand))
+            quary = quary.Where(x => x.Brand.ToLower()
+                    .Contains(filter.Brand.ToLower()));
+        
+        if (!string.IsNullOrEmpty(filter.Model))
+            quary = quary.Where(x => x.Model.ToLower()
+                .Contains(filter.Model.ToLower()));
+        
+        var totalRecords = quary.Count();
+        
+        var res = quary.Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize).ToList();
+
+        var getCar = _logic.GetCar(res);
+        
+        return new PaginationResponse<List<GetCar>>(filter.PageNumber, filter.PageSize, totalRecords, getCar);
+    }
+    
+    #endregion
+
+    #region GetCarOrderByCreatedAt
+
+    public Response<List<GetCar>> GetCarOrderByCreatedAt()
+    {
+        var res = _context.Cars.OrderBy(x => x.CreatedAt).ToList();
+
+        var getCars = _logic.GetCar(res);
+        
+        return new Response<List<GetCar>>(getCars);
+    }
+
+    #endregion
 }

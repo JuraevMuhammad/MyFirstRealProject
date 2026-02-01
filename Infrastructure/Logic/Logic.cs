@@ -1,8 +1,13 @@
-﻿namespace Infrastructure.Logic;
+﻿using System.Net;
+using Domain.DTOs.Car;
+using Domain.Entities;
+using Domain.Response;
+
+namespace Infrastructure.Logic;
 
 public class Logic : ILogic
 {
-    #region MyPassword
+    #region LogicPassword
 
     public bool ValidatorPassword(string password)
     {
@@ -24,8 +29,25 @@ public class Logic : ILogic
 
     #endregion
 
-    public bool ValidatorEmail(string email)
+    #region LogicGetCar
+
+    public List<GetCar> GetCar(List<Car> cars)
     {
-        throw new NotImplementedException();
+        var res = cars.Select(x => new GetCar()
+            {
+                Id = x.Id,
+                Brand = x.Brand,
+                Model = x.Model,
+                Year = x.Year,
+                DailyPrice = x.DailyPrice,
+                ImagePath = x.ImagePath!,
+                IsAvailable = x.IsAvailable,
+                CreatedAt = x.CreatedAt,
+            }
+        ).ToList();
+        
+        return res;
     }
+
+    #endregion
 }

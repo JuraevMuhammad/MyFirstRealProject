@@ -39,4 +39,26 @@ public class CarController(ICarService service) : ControllerBase
         var res = service.GetCar(id);
         return StatusCode(res.StatusCode, res);
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCar(int id)
+    {
+        var res = await service.DeleteCar(id);
+        return StatusCode(res.StatusCode, res);
+    }
+
+    [HttpGet("search-brand&model-car")]
+    public IActionResult Search([FromQuery] NameCarFilter filter)
+    {
+        var res = service.GetCarSearchByBrandAndModel(filter);
+        return StatusCode(res.StatusCode, res);
+    }
+
+    [HttpGet("order-by")]
+    public IActionResult GetCarOrderByCreatedAt()
+    {
+        var res =  service.GetCarOrderByCreatedAt();
+        return StatusCode(res.StatusCode, res);
+    }
 }
