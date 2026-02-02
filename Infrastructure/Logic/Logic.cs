@@ -41,7 +41,7 @@ public class Logic(ApplicationDbContext context) : ILogic
         var res = context.Users.Any(x => x.Email == email);
         if (res)
             return EmailStatus.AlreadyExists;
-        if (email.EndsWith("@gmail.com") || email.EndsWith("@mail.ru") || email.EndsWith(".com") && email.Contains('@'))
+        if (email.EndsWith("@mail.ru") || email.EndsWith(".com") && email.Contains('@') && email.Contains("mail"))
             return EmailStatus.Available;
         return EmailStatus.NotAllowed;
     }

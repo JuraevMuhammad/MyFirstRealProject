@@ -5,6 +5,7 @@ using Domain.Enums;
 using Domain.Filters;
 using Domain.Response;
 using Infrastructure.Data;
+using Infrastructure.Email;
 using Infrastructure.Interfaces;
 using Infrastructure.Logic;
 

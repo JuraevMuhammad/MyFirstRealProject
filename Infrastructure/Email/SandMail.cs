@@ -116,4 +116,33 @@ public class SandMail : ISandMail
 
     #endregion
 
+
+    public async Task SendPasswordResetEmailAsync(User user, string password)
+    {
+        var random = new Random();
+        var newPassword = random.Next(1000000, 9999999);
+        var addPassword = $"{newPassword}s";
+        
+        MailAddress fromMailAddress = new(_options.From, "Car Rental Service");
+        MailAddress toAddress = new(user.Email, user.FullName);
+
+        using var mailMessage = new MailMessage(fromMailAddress, toAddress)
+        {
+            Subject = user.Email,
+            Body = $"Hello {user.FullName}!\nYour login: {user.Email}\nYour password: {addPassword}"
+        };
+
+        using var smtp = new SmtpClient(_options.Host, _options.Port)
+        {
+            EnableSsl = true,
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            UseDefaultCredentials = false,
+            Credentials = new NetworkCredential(
+                _options.UserName,
+                _options.Password),
+        };
+        
+        await smtp.SendMailAsync(mailMessage);
+    }
+
 }

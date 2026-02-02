@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Infrastructure.Interfaces;
+namespace Infrastructure.JWT;
 
 public interface IJwtProvider
 {
