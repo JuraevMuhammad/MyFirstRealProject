@@ -15,4 +15,5 @@ public interface IUserService
     Task<Response<string>> UpdateUser(int id, UpdateUser dto);
     Task<Response<string>> UpdatePasswordUser(int id, UpdatePasswordUser dto);
     Task<Response<string>> DeleteUser(int id);
+    Task<Response<string>> SendPasswordResetEmailAsync(int id);
 }

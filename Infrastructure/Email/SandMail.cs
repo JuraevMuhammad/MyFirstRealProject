@@ -117,7 +117,7 @@ public class SandMail : ISandMail
     #endregion
 
 
-    public async Task SendPasswordResetEmailAsync(User user, string password)
+    public async Task<string> SendPasswordResetEmailAsync(User user)
     {
         var random = new Random();
         var newPassword = random.Next(1000000, 9999999);
@@ -143,6 +143,8 @@ public class SandMail : ISandMail
         };
         
         await smtp.SendMailAsync(mailMessage);
+
+        return addPassword;
     }
 
 }

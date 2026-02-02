@@ -224,4 +224,19 @@ public class UserService : IUserService
     }
 
     #endregion
+
+    public async Task<Response<string>> SendPasswordResetEmailAsync(int id)
+    {
+        var user = _dbContext.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == id);
+        if (user == null)
+            return new Response<string>(HttpStatusCode.NotFound, "not found");
+
+        var password = await _mail.SendPasswordResetEmailAsync(user);
+
+        user.PasswordHash = _passwordHasher.Generate(password);
+        
+        await _dbContext.SaveChangesAsync();
+        
+        return new Response<string>(HttpStatusCode.OK, "Password reset email in user");
+    }
 }

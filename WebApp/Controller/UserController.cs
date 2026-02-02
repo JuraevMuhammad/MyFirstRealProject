@@ -44,4 +44,11 @@ public class UserController(IUserService service) : ControllerBase
         var res = await service.DeleteUser(id);
         return StatusCode(res.StatusCode, res);
     }
+
+    [HttpPut("generate-password")]
+    public async Task<IActionResult> GeneratePassword(int id)
+    {
+        var res = await service.SendPasswordResetEmailAsync(id);
+        return StatusCode(res.StatusCode, res);
+    }
 }
