@@ -182,7 +182,7 @@ public class UserService : IUserService
     #region UpdatePasswordUser
     public async Task<Response<string>> UpdatePasswordUser(int id, UpdatePasswordUser dto)
     {
-        var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+        var user = _dbContext.Users.FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
         if (user == null)
             return new Response<string>(HttpStatusCode.NotFound, "not found");
 
